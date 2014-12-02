@@ -27,6 +27,7 @@ public class GameView extends View implements SensorEventListener {
     Paint bgpaint;
     Rect baselevel;
     Point reset;
+    int levelId;
 
 
     public GameView(Context context) {
@@ -43,11 +44,10 @@ public class GameView extends View implements SensorEventListener {
         bgpaint.setStyle(Paint.Style.FILL);
 
         display.getSize(size);
-
-        System.out.println(context.getResources().getDisplayMetrics().scaledDensity);
         baselevel = new Rect(0,0,size.x,size.y);
 
-        setLevel(0);
+        levelId = 0;
+        setLevel(levelId);
     }
 
     void setLevel(int i){
@@ -69,6 +69,18 @@ public class GameView extends View implements SensorEventListener {
                 reset.x = 100;
                 reset.y = 100;
                 ball.reset(reset.x,reset.y);
+                break;
+
+            case 1:
+                wall[4] = new Wall(0,220,520,240);
+                wall[5] = new Wall(200,480,720,500);
+                wall[6] = new Wall(0, 720, 520, 740);
+                wall[7] = new Wall(200, 1000, 720, 1020);
+
+                goal = new Goal(500,1000,720,1280);
+                reset.x = 100;
+                reset.y = 100;
+                ball.reset(reset.x,reset.y);
 
                 break;
         }
@@ -78,17 +90,18 @@ public class GameView extends View implements SensorEventListener {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         runLogic();
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+
 
         canvas.drawPaint(bgpaint);
-
         goal.draw(canvas);
+        //HERE paint holes
         for (int j=0; wall[j] != null; j++){
             wall[j].draw(canvas);
         }
-
-
         ball.draw(canvas);
-
+        canvas.drawText("ROLL: "+(float)xsens+", PITCH: "+(float)zsens,50,50,paint);
     }
 
 
@@ -105,18 +118,18 @@ public class GameView extends View implements SensorEventListener {
                         && wall[j].getBounds().right > vn.x+ball.getPosition().x        //Global position comparison
                         && wall[j].getBounds().top < vn.y+ball.getPosition().y
                         && wall[j].getBounds().bottom > vn.y+ball.getPosition().y){
-                    //System.out.println("COLLISION AT SLICE "+i+" AT ["+(vn.x)+","+(vn.y) + "] ANGLE: "+ angle );
-                    //float dx = vn.x+ball.getPosition().x - wall[j].getBounds().left;
-                    //float dy = vn.y+ball.getPosition().y - wall[j].getBounds().top;
-                    //float h = Math.min(dx,dy);
-                    //System.out.println("Collision point ["+dx+","+dy+"], min "+h);
+
                     ball.onCollision(vn,wall[j].getBounds());
                     break;
                 }
             }
         }
 
-        ball.move(xsens,zsens);
+        ball.move(xsens, zsens);            //Calibration issues..? when debugging these values seem about right but movement
+                                            //is occasionally unpredictable
+
+        if (goal.getBounds().contains((int)ball.getPosition().x,(int)ball.getPosition().y))
+            setLevel(++levelId);
     }
 
     @Override

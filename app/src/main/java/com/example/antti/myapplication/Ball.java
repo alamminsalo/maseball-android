@@ -29,21 +29,21 @@ public class Ball extends Drawable {
         radius = r;
 
         maxspeed = r*10;       //We try to ensure ball won't ever end up beyond a wall..poorly.
-        speedfactor = 1.4f;    //Working (so far) after making the ball larger
+        speedfactor = 2.0f;    //Working (so far) after making the ball larger
 
         pos = new Vector2d(x,y);
         vel = new Vector2d();
     }
 
-    public void move(double roll, double pitch){
+    public void move(float roll, float pitch){
         vel.x += roll * 9.81f * speedfactor;
         vel.y += pitch * 9.81f * speedfactor;
 
-        vel.x = Math.abs(vel.x) > maxspeed ? vel.x > 0 ? maxspeed : -maxspeed : vel.x;      //Limit the speed if over max
+        vel.x = Math.abs(vel.x) > maxspeed ? vel.x > 0 ? maxspeed : -maxspeed : vel.x;      //Limit the speed to max
         vel.y = Math.abs(vel.y) > maxspeed ? vel.y > 0 ? maxspeed : -maxspeed : vel.y;
 
-        pos.x += vel.x * 0.1f;
-        pos.y += vel.y * 0.1f;
+        pos.x += vel.x * 0.166f;
+        pos.y += vel.y * 0.166f;
     }
     public void setPosition(float x, float y)
     {

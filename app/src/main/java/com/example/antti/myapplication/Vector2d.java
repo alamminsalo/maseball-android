@@ -100,14 +100,14 @@ public class Vector2d {
         this.y *= -1;
     }
 
-    public Vector2d reflectionProduct(Vector2d vn){
-        Vector2d ref = new Vector2d(vn);
+    public Vector2d reflectionProduct(Vector2d vn){     //Equation: N=Normal, L=Original, R=Reflected Vector
+        Vector2d ref = new Vector2d(vn);                //R = 2(( (N.L)/(|N|**2)) *N) - L
         float dot = Vector2d.dotProduct(this,vn);
         dot = (float) (dot/(Math.pow(vn.normalize(),2)));
         ref.scale(dot);
         ref.scale(2);
         ref.subtract(this);
-        ref.negate();
+        ref.negate();                                   //Finally reverse the new vector
         return ref;
     }
 
