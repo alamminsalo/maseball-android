@@ -4,18 +4,17 @@ import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.Window;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Game extends Activity{
-    /** Called when the activity is first created. */
-
 
     GameView view;
     SensorManager sman;
     Sensor sensor;
+    Timer timer;
+    TimerTask timerTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +26,18 @@ public class Game extends Activity{
         sman = (SensorManager)getSystemService(SENSOR_SERVICE);
         sensor = sman.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         sman.registerListener(view,sensor,SensorManager.SENSOR_DELAY_GAME);
+
+        timer = new Timer();
+        timerTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                view.postInvalidate();
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 100/32);
+
     }
 
     protected void onResume() {

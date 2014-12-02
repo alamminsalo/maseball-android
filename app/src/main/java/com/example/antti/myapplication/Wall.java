@@ -13,12 +13,15 @@ import android.graphics.drawable.Drawable;
 public class Wall extends Drawable {
     Paint paint;
 
+    public Wall(){
+        this(0,0,0,0);
+    }
     public Wall(int x, int y, int width, int height){
         this.setBounds(x,y,width,height);
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.YELLOW);
+        paint.setColor(Color.BLUE);
     }
 
     @Override

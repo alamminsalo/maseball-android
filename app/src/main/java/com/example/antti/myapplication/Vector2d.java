@@ -131,7 +131,7 @@ public class Vector2d {
     }
 
     public Vector2d getUnitVector(){
-        return new Vector2d((float)Math.cos(this.angle()),(float)Math.sin(this.angle()));
+        return new Vector2d((float)Math.sin(this.angle()),(float)Math.cos(this.angle()));
     }
 
 }
