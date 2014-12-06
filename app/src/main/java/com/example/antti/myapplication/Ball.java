@@ -28,8 +28,8 @@ public class Ball extends Drawable {
 
         radius = r;
 
-        maxspeed = r*10;       //We try to ensure ball won't ever end up beyond a wall..poorly.
-        speedfactor = 2.0f;    //Working (so far) after making the ball larger
+        maxspeed = r*9;       //We try to ensure ball won't ever end up beyond a wall..poorly.
+        speedfactor = 1.0f * 100/radius;
 
         pos = new Vector2d(x,y);
         vel = new Vector2d();
@@ -42,8 +42,8 @@ public class Ball extends Drawable {
         vel.x = Math.abs(vel.x) > maxspeed ? vel.x > 0 ? maxspeed : -maxspeed : vel.x;      //Limit the speed to max
         vel.y = Math.abs(vel.y) > maxspeed ? vel.y > 0 ? maxspeed : -maxspeed : vel.y;
 
-        pos.x += vel.x * 0.166f;
-        pos.y += vel.y * 0.166f;
+        pos.x += vel.x * 0.06f;
+        pos.y += vel.y * 0.06f;
     }
     public void setPosition(float x, float y)
     {
@@ -64,7 +64,7 @@ public class Ball extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawCircle(pos.x,this.pos.y,radius,paint);
+        canvas.drawCircle(pos.x,pos.y,radius,paint);
     }
 
     @Override
@@ -91,13 +91,25 @@ public class Ball extends Drawable {
 
         while (object.left < vn.x+pos.x         //Move the ball away from the wall...(lazy method)
                 && object.right > vn.x+pos.x    //In real cases better to use circle segments intersecting the object
-                && object.top < vn.y+pos.y
+                && object.top < vn.y+pos.y      //Note: seems to introduce "stickyness"
                 && object.bottom > vn.y+pos.y) {
 
             pos.subtract(vn.getUnitVector());   //Vector values transformed to [-1...1, -1...1]
         }
         vel.reflect(vn);                        //Reflect the movement vector along the normal vector
-        vel.scale(0.8f);                        //Lose some speed
+        vel.scale(0.6f);                        //Lose some speed
+    }
+
+    public void onCollisionWithBall(Ball ball, float distance){
+        Vector2d collisionVec = pos.subtractProduct(ball.getPosition());
+        collisionVec.scale(1/distance);
+
+        float aci = Vector2d.dotProduct(vel,collisionVec);
+        float bci = Vector2d.dotProduct(ball.getVector(),collisionVec);
+
+        this.vel.add(collisionVec.scaleProduct(bci - aci));
+        ball.getVector().add(collisionVec.scaleProduct(aci-bci));
+
     }
 
     public void reset(int x, int y){

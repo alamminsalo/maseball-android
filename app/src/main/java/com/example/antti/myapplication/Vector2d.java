@@ -91,6 +91,12 @@ public class Vector2d {
         this.y *= r;
     }
 
+    public Vector2d scaleProduct(float r){
+        Vector2d v = new Vector2d(this);
+        v.scale(r);
+        return v;
+    }
+
     public float angleBetween(Vector2d v){
         return this.angle() - v.angle();
     }
